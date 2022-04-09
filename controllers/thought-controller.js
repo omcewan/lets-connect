@@ -27,12 +27,37 @@ const thoughtController = {
 
   createThought({ body }, res) {
     Thought.create(body)
-      .populate({ path: 'reactions' })
-      .select('-__v')
       .then((newThoughtData) => {
         res.json(newThoughtData);
       })
       .catch((err) => res.status(400).json(err));
+  },
+
+  updateThought({ params, body }, res) {
+    Thought.findOneAndUpdate({ _id: params.id }, body, {
+      new: true,
+      runValidators: true,
+    })
+      .then((updatedThoughData) => {
+        if (!updatedThoughData) {
+          res.status(400).json({ message: 'No Thought with this ID!' });
+          return;
+        }
+        res.json(updatedThoughData);
+      })
+      .catch((err) => res.status(500).json(err));
+  },
+
+  deleteThought({ params }, res) {
+    Thought.findOneAndDelete({ _id: params.id })
+      .then((deletedThoughtData) => {
+        if (!deletedThoughtData) {
+          res.status(400).json({ message: 'No Thought with this ID!' });
+          return;
+        }
+        res.json(deletedThoughtData);
+      })
+      .catch((err) => res.status(500).json(err));
   },
 };
 
