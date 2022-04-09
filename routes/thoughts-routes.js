@@ -7,7 +7,9 @@ const {
   deleteThought,
 } = require('../controllers/thought-controller');
 
-router.route('/thoughts').get(getAllThoughts).post(createThought);
+router.route('/thoughts').get(getAllThoughts);
+
+router.route('/thoughts/:userId').post(createThought);
 
 router
   .route('/thoughts/:id')
