@@ -1,4 +1,4 @@
-const { Thought, User } = require('../models');
+const { User } = require('../models');
 
 const userController = {
   // get all users
@@ -27,7 +27,7 @@ const userController = {
   createUser({ body }, res) {
     User.create(body)
       .then((newUserData) => res.json(newUserData))
-      .catch((err) => res.status(500).json(err));
+      .catch((err) => res.status(400).json(err));
   },
 
   updateUser({ params, body }, res) {
