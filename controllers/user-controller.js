@@ -41,7 +41,7 @@ const userController = {
     User.findOneAndUpdate(
       { _id: params.userId },
       { $addToSet: { friends: params.friendsId } },
-      { new: true}
+      { new: true }
     )
       .then((updatedUserData) => {
         if (!updatedUserData) {

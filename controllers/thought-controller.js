@@ -25,12 +25,12 @@ const thoughtController = {
       .catch((err) => res.status(500).json(err));
   },
 
-  createThought({ params, body }, res) {
+  createThought({ body }, res) {
     Thought.create(body)
       .then(({ _id }) => {
         console.log(_id);
         return User.findOneAndUpdate(
-          { _id: params.userId },
+          { _id: body.userId },
           { $push: { thoughts: _id } },
           { new: true }
         );
@@ -41,6 +41,22 @@ const thoughtController = {
           return;
         }
         res.json(newThoughtData);
+      })
+      .catch((err) => res.status(500).json(err));
+  },
+
+  createReaction({ params, body }, res) {
+    Thought.findOneAndUpdate(
+      { _id: params.thoughtId },
+      { $push: { reactions: body } },
+      { new: true, runValidators: true }
+    )
+      .then((newReactionData) => {
+        if (!newReactionData) {
+          res.status(400).json({ message: 'No Thought found with this Id!' });
+          return;
+        }
+        res.json(newReactionData);
       })
       .catch((err) => res.status(500).json(err));
   },
@@ -70,6 +86,16 @@ const thoughtController = {
         res.json(deletedThoughtData);
       })
       .catch((err) => res.status(500).json(err));
+  },
+
+  deleteReaction({ params }, res) {
+    Thought.findOneAndUpdate(
+      { _id: params.thoughtId },
+      { $pull: { reactions: { reactionId: params.reactionId } } },
+      { new: true, runValidators: true }
+    )
+      .then((removedReactionData) => res.json(removedReactionData))
+      .catch((err) => res.json(err));
   },
 };
 
