@@ -1,5 +1,6 @@
 const { Schema, model } = require('mongoose');
 const validateEmail = require('../utils/validateEmail');
+const Thought = require('./Thought');
 
 const UserSchema = new Schema(
   {
@@ -39,6 +40,16 @@ const UserSchema = new Schema(
 
 UserSchema.virtual('friendCount').get(function () {
   return this.friends.length;
+});
+
+UserSchema.pre('remove', function (next) {
+  try {
+    console.log(this.thoughts.map((element) => element));
+    Thought.remove({ username: this.username });
+    next();
+  } catch (error) {
+    next(error);
+  }
 });
 
 const User = model('User', UserSchema);

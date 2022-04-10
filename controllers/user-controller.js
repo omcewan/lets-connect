@@ -69,13 +69,15 @@ const userController = {
   },
 
   deleteUser({ params }, res) {
-    User.findOneAndDelete({ _id: params.id })
-      .then((deletedUserData) => {
-        if (!deletedUserData) {
+    User.findOne({ _id: params.id })
+      .then((user) => {
+        if (!user) {
           res.status(400).json({ message: 'No User found with this ID!' });
           return;
         }
-        res.json(deletedUserData);
+        user.remove({ _id: params.id }).then((deletedUserData) => {
+          res.json(deletedUserData);
+        });
       })
       .catch((err) => res.status(500).json(err));
   },
