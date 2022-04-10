@@ -42,12 +42,11 @@ UserSchema.virtual('friendCount').get(function () {
   return this.friends.length;
 });
 
-UserSchema.pre('remove', async function (next) {
+UserSchema.pre('remove', async function () {
   try {
-    await Thought.remove({ _id: { $in: this.thoughts } });
-    next();
+    await Thought.deleteMany({ _id: { $in: this.thoughts } });
   } catch (error) {
-    next(error);
+    throw error;
   }
 });
 
